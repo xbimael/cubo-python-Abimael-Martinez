@@ -1,0 +1,29 @@
+# test03.kv
+
+BoxLayout:
+    orientation: 'vertical'
+    padding: 20
+    spacing: 15
+
+    Label:
+        text: "Panel de Control Arduino"
+        font_size: '24sp'
+        color: 0.2, 0.6, 1, 1
+
+    TextInput:
+        id: entrada_valor
+        hint_text: "Introduce valor para el modo..."
+        multiline: False
+        size_hint_y: None
+        height: '40dp'
+
+    Button:
+        text: "Sincronizar con Arduino"
+        background_normal: ''
+        background_color: 0.1, 0.5, 0.1, 1
+        on_release: app.ejecutar_logica(entrada_valor.text)
+
+    Label:
+        id: etiqueta_estado
+        text: "Esperando comando..."
+        color: 0.8, 0.8, 0.8, 1

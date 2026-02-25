@@ -1,0 +1,36 @@
+#:import Graph kivy_garden.graph.Graph
+
+BoxLayout:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 10
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.2
+        spacing: 10
+        TextInput:
+            id: input_ceros
+            hint_text: "Ceros (ej: -1)"
+            multiline: False
+        TextInput:
+            id: input_polos
+            hint_text: "Polos (ej: -1, -2)"
+            multiline: False
+    Button:
+        text: "GRAFICAR"
+        size_hint_y: 0.2
+        background_color: 1, 0.1, 0.1, 1
+        on_release: app.graficar_escalon(input_ceros.text, input_polos.text)
+
+    Graph:
+        id: mi_grafica
+        xlabel: 'Tiempo (s)'
+        ylabel: 'Amplitud'
+        x_grid_label: True
+        y_grid_label: True
+        x_grid: True
+        y_grid: True
+        tick_color: 0.5, 0.5, 0.5, 1
+        border_color: 1, 1, 1, 1
+        label_options: {'color': [1, 1, 1, 1], 'bold': True}

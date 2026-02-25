@@ -1,0 +1,112 @@
+#:import Graph kivy_garden.graph.Graph
+
+BoxLayout:
+    orientation: 'vertical'
+    padding: 20
+    spacing: 15
+
+    # --- TÍTULO ---
+    Label:
+        text: "CONTROLADOR ARDUINO - MODO CALENTAMIENTO"
+        font_size: '20sp'
+        bold: True
+        size_hint_y: None
+        height: '40dp'
+        color: 0, 0.7, 1, 1
+
+    # --- BLOQUE 1: CONEXIÓN SERIAL ---
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: '50dp'
+        spacing: 10
+        
+        Button:
+            text: "BUSCAR"
+            size_hint_x: 0.2
+            on_release: app.actualizar_puertos()
+            
+        Spinner:
+            id: selector_puerto
+            text: "Seleccionar Puerto"
+            values: []
+            size_hint_x: 0.5
+            
+        Button:
+            id: btn_conectar
+            text: "CONNECT"
+            size_hint_x: 0.3
+            background_normal: ''
+            background_color: 0, 0.6, 0.2, 1
+            on_release: app.gestionar_conexion(selector_puerto.text)
+
+    # --- BLOQUE 2: ESTADO ---
+    Label:
+        id: estado_conexion
+        text: "Estado: Disconnected"
+        size_hint_y: None
+        height: '30dp'
+        italic: True
+
+    # --- ESPACIADOR / SEPARADOR ---
+    # En lugar de usar Canvas complicado, usamos un Widget vacío con color de fondo
+    Widget:
+        size_hint_y: None
+        height: '2dp'
+        canvas:
+            Color:
+                rgba: 0.3, 0.3, 0.3, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+    # --- BLOQUE 3: MODO CALENTAMIENTO ---
+    BoxLayout:
+        id: panel_calentamiento
+        orientation: 'vertical'
+        spacing: 10
+        size_hint_y: None
+        height: '140dp'
+        # Esta línea deshabilita el panel si no hay conexión
+        disabled: btn_conectar.text != "DISCONNECT"
+        
+        canvas.before:
+            Color:
+                rgba: 0.12, 0.12, 0.12, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: "MODO 1: CALENTAMIENTO"
+            bold: True
+            color: 1, 0.5, 0, 1
+
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: [20, 10, 20, 20]
+            spacing: 20
+
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+                Label:
+                    text: "Tiempo (s)"
+                    font_size: '14sp'
+                TextInput:
+                    id: tiempo_calentamiento
+                    text: "10"
+                    multiline: False
+                    input_filter: 'int'
+                    halign: 'center'
+
+            Button:
+                text: "EJECUTAR"
+                bold: True
+                background_normal: ''
+                background_color: 1, 0.5, 0, 1
+                on_release: app.ejecutar_calentamiento(tiempo_calentamiento.text)
+
+    # --- RELLENO INFERIOR ---
+    Widget:
+        size_hint_y: 1
