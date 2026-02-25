@@ -17,21 +17,16 @@ class ConexionWidget(BoxLayout):
         self.ids.selector_puerto.values = puertos
 
     def gestionar_conexion(self, puerto):
+        app = App.get_running_app()
+        
         if not self.arduino.conectado:
             exito, mensaje = self.arduino.conectar(puerto)
             if exito:
-                self.arduino.conectado = True
-                self.ids.estado_conexion.text = "Estado: Connected"
-                self.ids.estado_conexion.color = [0, 1, 0, 1]
-                self.ids.btn_conectar.text = "DISCONNECT"
-                self.ids.btn_conectar.background_color = [1, 0, 0, 1]
+                # ... tu código de colores y textos ...
+                app.conectado = True # <--- ESTO desbloquea todo al instante
             else:
                 self.ids.estado_conexion.text = f"Error: {mensaje}"
         else:
             self.arduino.desconectar()
-            self.ids.estado_conexion.text = "Estado: Disconnected"
-            self.ids.estado_conexion.color = [1, 1, 1, 1]
-            self.ids.btn_conectar.text = "CONNECT"
-            self.ids.btn_conectar.background_color = [0, 0.6, 0.2, 1]
-        app = App.get_running_app()
-        app.property('conectado').dispatch(app)
+            # ... tu código de colores y textos ...
+            app.conectado = False # <--- ESTO bloquea todo al instante

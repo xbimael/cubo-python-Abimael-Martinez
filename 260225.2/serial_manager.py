@@ -37,3 +37,13 @@ class ConexionSerial(EventDispatcher):
         if self.ser:
             self.ser.close()
         self.conectado = False
+
+    def enviar_datos(self, modo, valor):
+        if self.ser and self.conectado:
+            try:
+                # Enviamos modo y valor con saltos de línea
+                cadena = f"{modo}\n{valor}\n".encode('utf-8')
+                self.ser.write(cadena)
+                print(f"SERIAL: Enviado -> {cadena}")
+            except Exception as e:
+                print(f"SERIAL ERROR: {e}")
