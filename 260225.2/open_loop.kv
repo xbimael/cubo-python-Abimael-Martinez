@@ -1,0 +1,53 @@
+<ModoOpenLoop>:
+    orientation: 'vertical'
+    padding: 15
+    spacing: 15
+    
+    Label:
+        text: "CONFIGURACIÓN LAZO ABIERTO"
+        size_hint_y: None
+        height: '30dp'
+        bold: True
+        color: (0, 0.7, 1, 1)
+
+    GridLayout:
+        cols: 2
+        spacing: 15
+        row_default_height: '40dp'
+        row_force_default: True
+
+        Label:
+            text: "Voltaje de Entrada (V):"
+            halign: 'left'
+            text_size: self.size
+
+        TextInput:
+            id: v_input
+            text: "5.0"
+            multiline: False
+            input_filter: 'float'
+
+        Label:
+            text: "Tiempo Simulación (s):"
+            halign: 'left'
+            text_size: self.size
+
+        TextInput:
+            id: t_input
+            text: "10.0"
+            multiline: False
+            input_filter: 'float'
+
+    Widget:
+        size_hint_y: 1
+
+    Button:
+        id: btn_ejecutar
+        text: "EJECUTAR ENSAYO"
+        size_hint_y: None
+        height: '50dp'
+        bold: True
+        # Eliminada la dependencia de conexion_ref
+        background_normal: ''
+        background_color: (0, 0.5, 0.8, 1) 
+        on_release: root.ejecutar_open_loop(v_input.text, t_input.text)

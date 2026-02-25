@@ -1,0 +1,15 @@
+<MonitorGrafico>:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 5
+    canvas.before:
+        Color:
+            rgba: 0.12, 0.12, 0.12, 1  # Gris muy oscuro
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [5,]
+
+    BoxLayout:
+        id: graph_container
+        # El widget Graph se insertará aquí mediante Python
