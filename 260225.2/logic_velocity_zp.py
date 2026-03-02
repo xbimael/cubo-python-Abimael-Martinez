@@ -4,6 +4,7 @@ from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 import numpy as np
 import time
+import math
 
 # Cargamos el archivo de diseño correspondiente
 Builder.load_file('velocity_zp.kv')
@@ -17,6 +18,24 @@ class ModoVelocityZP(BoxLayout):
         self.datos_acumulados = []
         self.tsim_limite = 0
 
+    def aplicar_filtro_media_movil(self, datos, ventana=13):
+        """Implementa un suavizado básico similar a sgolayfilt."""
+        if len(datos) < ventana:
+            return datos
+        
+        datos_suavizados = []
+        for i in range(len(datos)):
+            if i < ventana:
+                # Al principio, usar media de puntos disponibles
+                ventana_actual = datos[0:i+1]
+            else:
+                ventana_actual = datos[i-ventana+1:i+1]
+            
+            media = sum(ventana_actual) / len(ventana_actual)
+            datos_suavizados.append(media)
+            
+        return datos_suavizados
+    
     def ejecutar_velocity_zp(self, k, c, p, ci, pi, ref, t_sim):
         if not (self.conexion_ref and self.conexion_ref.arduino.ser):
             print("ERROR: Arduino no conectado")
@@ -107,6 +126,21 @@ class ModoVelocityZP(BoxLayout):
         return True
 
     def finalizar_y_graficar(self):
-        print(f"Ensayo finalizado. Puntos: {len(self.datos_acumulados)}")
-        if self.grafica_ref and self.datos_acumulados:
-            self.grafica_ref.dibujar_lote(self.datos_acumulados)
+        Clock.unschedule(self.leer_datos)
+        
+        if self.datos_acumulados:
+            # 1. Extraer los valores de salida crudos
+            valores_crudos = [p[1] for p in self.datos_acumulados]
+            tiempos = [p[0] for p in self.datos_acumulados]
+            
+            # 2. Aplicar el filtro
+            valores_filtrados = self.aplicar_filtro_media_movil(valores_crudos, ventana=13)
+            
+            # 3. Reconstruir los puntos filtrados (tiempo, valor_filtrado)
+            self.datos_filtrados = list(zip(tiempos, valores_filtrados))
+            
+            # 4. Graficar los datos filtrados
+            if self.grafica_ref:
+                self.grafica_ref.dibujar_lote(self.datos_filtrados)                
+        
+        print("Simulación Finalizada y Filtrada")
