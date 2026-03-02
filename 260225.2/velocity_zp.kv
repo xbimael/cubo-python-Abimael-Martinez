@@ -1,10 +1,10 @@
-<ModoVelocityActions>:
+<ModoVelocityZP>:
     orientation: 'vertical'
     padding: 15
-    spacing: 10
+    spacing: 5
     
     Label:
-        text: "VELOCITY CONTROL ACTIONS"
+        text: "VELOCITY CONTROL (ZEROS/POLES)"
         size_hint_y: None
         height: '30dp'
         bold: True
@@ -12,39 +12,55 @@
 
     GridLayout:
         cols: 2
-        spacing: 10
-        row_default_height: '35dp'
+        spacing: 5
+        row_default_height: '30dp'
         row_force_default: True
 
         Label:
-            text: "Kp:"
+            text: "K:"
         TextInput:
-            id: kp_input
+            id: k_input
             text: "1.0"
             multiline: False
             input_filter: 'float'
 
         Label:
-            text: "Ki:"
+            text: "C:"
         TextInput:
-            id: ki_input
+            id: c_input
             text: "0.1"
             multiline: False
             input_filter: 'float'
 
         Label:
-            text: "Kd:"
+            text: "P:"
         TextInput:
-            id: kd_input
+            id: p_input
             text: "0.01"
             multiline: False
             input_filter: 'float'
 
         Label:
-            text: "Ref (Voltios):" # <--- CAMBIADO AQUÍ
+            text: "C_i:"
         TextInput:
-            id: ref_input # <--- ID RENOMBRADO PARA MAYOR CLARIDAD
-            text: "5.0" # <--- TEXTO POR DEFECTO AJUSTADO A VOLTIOS
+            id: ci_input
+            text: "0.1"
+            multiline: False
+            input_filter: 'float'
+
+        Label:
+            text: "P_i:"
+        TextInput:
+            id: pi_input
+            text: "0.01"
+            multiline: False
+            input_filter: 'float'
+
+        Label:
+            text: "Ref (Voltios):"
+        TextInput:
+            id: ref_input
+            text: "5.0"
             multiline: False
             input_filter: 'float'
 
@@ -60,11 +76,10 @@
         size_hint_y: 1
 
     Button:
-        text: "EJECUTAR ACCIONES"
+        text: "EJECUTAR Z/P"
         size_hint_y: None
         height: '50dp'
         bold: True
         background_normal: ''
         background_color: (0.8, 0.4, 0, 1) 
-        # LLAMADA ACTUALIZADA CON EL NUEVO ID
-        on_release: root.ejecutar_velocity_actions(kp_input.text, ki_input.text, kd_input.text, ref_input.text, t_input.text)
+        on_release: root.ejecutar_velocity_zp(k_input.text, c_input.text, p_input.text, ci_input.text, pi_input.text, ref_input.text, t_input.text)
