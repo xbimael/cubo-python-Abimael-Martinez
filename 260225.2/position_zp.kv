@@ -1,85 +1,83 @@
-<ModoVelocityZP>:
+<ModoPositionZP>:
     orientation: 'vertical'
-    padding: 15
-    spacing: 5
-    
+    spacing: 10
+    padding: 10
+
     Label:
-        text: "VELOCITY CONTROL (ZEROS/POLES)"
-        size_hint_y: None
-        height: '30dp'
+        text: "POSITION CONTROL (Z/P)"
         bold: True
-        color: (0.8, 0.4, 0, 1)
+        size_hint_y: None
+        height: '40dp'
+        color: (0.8, 0, 0.5, 1) # Púrpura
 
     GridLayout:
         cols: 2
         spacing: 5
         row_default_height: '30dp'
         row_force_default: True
-
-        Label:
+        
+        Label: 
             text: "K:"
         TextInput:
-            id: k_input
+            id: k_in
             text: "1.0"
             multiline: False
             input_filter: 'float'
-
-        Label:
+        
+        Label: 
             text: "C:"
         TextInput:
-            id: c_input
+            id: c_in
             text: "0.1"
             multiline: False
             input_filter: 'float'
-
-        Label:
+        
+        Label: 
             text: "P:"
         TextInput:
-            id: p_input
+            id: p_in
             text: "0.01"
             multiline: False
             input_filter: 'float'
-
-        Label:
-            text: "C_i:"
+            
+        Label: 
+            text: "Ci:"
         TextInput:
-            id: ci_input
+            id: ci_in
             text: "0.1"
             multiline: False
             input_filter: 'float'
-
-        Label:
-            text: "P_i:"
+            
+        Label: 
+            text: "Pi:"
         TextInput:
-            id: pi_input
+            id: pi_in
             text: "0.01"
             multiline: False
             input_filter: 'float'
-
-        Label:
-            text: "Ref (Voltios):"
+        
+        Label: 
+            text: "Referencia (rad):"
         TextInput:
-            id: ref_input
+            id: ref_in
+            text: "3.14"
+            multiline: False
+            input_filter: 'float'
+        
+        Label: 
+            text: "Tiempo (s):"
+        TextInput:
+            id: t_in
             text: "5.0"
             multiline: False
             input_filter: 'float'
-
-        Label:
-            text: "Tiempo (s):"
-        TextInput:
-            id: t_input
-            text: "3.0"
-            multiline: False
-            input_filter: 'float'
-
-    Widget:
+    
+    Widget: 
         size_hint_y: 1
-
+    
     Button:
         text: "EJECUTAR"
         size_hint_y: None
         height: '50dp'
-        bold: True
-        background_normal: ''
-        background_color: (0.8, 0.4, 0, 1) 
-        on_release: root.ejecutar_velocity_zp(k_input.text, c_input.text, p_input.text, ci_input.text, pi_input.text, ref_input.text, t_input.text)
+        background_color: (0.8, 0, 0.5, 1)
+        on_release: root.ejecutar_position_zp(k_in.text, c_in.text, p_in.text, ci_in.text, pi_in.text, ref_in.text, t_in.text)
