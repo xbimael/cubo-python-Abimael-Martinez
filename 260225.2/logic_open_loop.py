@@ -2,6 +2,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.clock import Clock
+import time
+import math
 
 # Cargamos el archivo de diseño
 Builder.load_file('open_loop.kv')
@@ -15,6 +17,24 @@ class ModoOpenLoop(BoxLayout):
         super().__init__(**kwargs)
         self.datos_acumulados = [] # Lista para guardar (tiempo, salida)
 
+    def aplicar_filtro_media_movil(self, datos, ventana=13):
+        """Implementa un suavizado básico similar a sgolayfilt."""
+        if len(datos) < ventana:
+            return datos
+        
+        datos_suavizados = []
+        for i in range(len(datos)):
+            if i < ventana:
+                # Al principio, usar media de puntos disponibles
+                ventana_actual = datos[0:i+1]
+            else:
+                ventana_actual = datos[i-ventana+1:i+1]
+            
+            media = sum(ventana_actual) / len(ventana_actual)
+            datos_suavizados.append(media)
+            
+        return datos_suavizados
+    
     def ejecutar_open_loop(self, v_input, t_sim):
         try:
             v = float(v_input)
@@ -42,31 +62,54 @@ class ModoOpenLoop(BoxLayout):
 
     def leer_datos(self, dt):
         arduino = self.conexion_ref.arduino
-        
         while arduino.ser.in_waiting >= 3:
             try:
-                linea = arduino.ser.readline().decode('utf-8').strip()
-                if not linea: continue
+                linea_out = arduino.ser.readline().decode('utf-8').strip()
+                linea_time = arduino.ser.readline().decode('utf-8').strip()
+                linea_volt = arduino.ser.readline().decode('utf-8').strip()
                 
-                dato_salida = float(linea)
-                dato_tiempo = float(arduino.ser.readline().decode('utf-8').strip())
-                dato_tension = float(arduino.ser.readline().decode('utf-8').strip())
-
-                # EN VEZ DE GRAFICAR, GUARDAMOS
-                self.datos_acumulados.append((dato_tiempo, dato_salida))
-                self.tiempo_actual = dato_tiempo
+                if not linea_out or not linea_time or not linea_volt:
+                    continue
                 
-                if self.tiempo_actual >= self.tsim_limite:
-                    self.finalizar_y_graficar() # Llamamos a la función de dibujo
+                dato_salida = float(linea_out)
+                dato_tiempo = float(linea_time)
+                dato_volt_raw = float(linea_volt) # <--- CAPTURAMOS EL VOLTAJE
+                
+                # IMPORTANTE: Guardar los TRES datos para que luego p[2] exista
+                self.datos_acumulados.append((dato_tiempo, dato_salida, dato_volt_raw))
+                
+                if dato_tiempo >= self.tsim_limite:
+                    self.finalizar_y_graficar()
                     return False
             except:
                 break
         return True
 
     def finalizar_y_graficar(self):
-        print(f"Simulación terminada. Puntos capturados: {len(self.datos_acumulados)}")
-        if self.grafica_ref:
-            # Enviamos todos los puntos de golpe a la gráfica
-            self.grafica_ref.dibujar_lote(self.datos_acumulados)
+        # 1. Detener la lectura del reloj
+        Clock.unschedule(self.leer_datos)
         
-        return True
+        if self.datos_acumulados:
+            # Separamos los datos que fuimos guardando en leer_datos
+            # Supongamos que guardaste: (tiempo, salida, tension_raw)
+            tiempos = [p[0] for p in self.datos_acumulados]
+            salidas = [p[1] for p in self.datos_acumulados]
+            
+            # Aplicamos la conversión de tensión de tu MATLAB: dato * 12 / 255
+            voltajes = [p[2] * 12 / 255 for p in self.datos_acumulados]
+            
+            # 2. Aplicamos el filtro (el valor 'ventana' según el modo de MATLAB)
+            # MATLAB usaba 13 para Velocity y 7 para Position
+            ventana = 7 if "Position" in self.__class__.__name__ else 13
+            filtrados = self.aplicar_filtro_media_movil(salidas, ventana=ventana)
+            
+            # 3. LLAMADA CLAVE: Enviamos los 4 vectores al monitor gráfico
+            if self.grafica_ref:
+                self.grafica_ref.actualizar_datos_completos(
+                    tiempos,   # t
+                    voltajes,  # v
+                    salidas,   # out
+                    filtrados  # filt
+                )
+        
+        print(f"Simulación de {self.__class__.__name__} finalizada.")

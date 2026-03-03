@@ -20,7 +20,7 @@
             text: "Kp:"
         TextInput:
             id: kp_input
-            text: "1.0"
+            text: "1"
             multiline: False
             input_filter: 'float'
 
@@ -28,7 +28,7 @@
             text: "Ki:"
         TextInput:
             id: ki_input
-            text: "0.1"
+            text: "0"
             multiline: False
             input_filter: 'float'
 
@@ -36,15 +36,15 @@
             text: "Kd:"
         TextInput:
             id: kd_input
-            text: "0.01"
+            text: "0"
             multiline: False
             input_filter: 'float'
 
         Label:
-            text: "Ref (Voltios):" # <--- CAMBIADO AQUÍ
+            text: "Ref (rad/s):"
         TextInput:
-            id: ref_input # <--- ID RENOMBRADO PARA MAYOR CLARIDAD
-            text: "5.0" # <--- TEXTO POR DEFECTO AJUSTADO A VOLTIOS
+            id: ref_input
+            text: "3.14"
             multiline: False
             input_filter: 'float'
 
@@ -52,7 +52,7 @@
             text: "Tiempo (s):"
         TextInput:
             id: t_input
-            text: "3.0"
+            text: "3"
             multiline: False
             input_filter: 'float'
 

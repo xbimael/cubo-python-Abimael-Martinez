@@ -12,6 +12,7 @@ from logic_velocity_actions import ModoVelocityActions
 from logic_velocity_zp import ModoVelocityZP
 from logic_position_actions import ModoPositionActions
 from logic_position_zp import ModoPositionZP
+from guardar import GuardarResultadosWidget
 
 class TesterApp(App):
     def build(self):
@@ -25,10 +26,21 @@ class TesterApp(App):
         zona_trabajo = BoxLayout(orientation='horizontal', spacing=10)
 
         # --- PANEL DE PESTAÑAS ---
-        tabs = TabbedPanel(do_default_tab=False, size_hint_x=0.4)
+        tabs = TabbedPanel(do_default_tab=False, size_hint_x=0.5)
 
-        # --- MONITOR GRÁFICO ---
-        self.grafica = MonitorGrafico(size_hint_x=0.6)
+        # --- MONITOR GRÁFICO Y BOTÓN DE GUARDADO ---
+        # Creamos un contenedor vertical para el lado derecho
+        panel_derecho = BoxLayout(orientation='vertical', size_hint_x=0.5, spacing=5)
+
+        # Instanciamos el monitor gráfico
+        self.grafica = MonitorGrafico(size_hint_y=1)
+        
+        # Creamos la instancia del widget de guardado pasándole la referencia
+        self.boton_guardar = GuardarResultadosWidget(grafica_ref=self.grafica)
+
+        # Los añadimos al panel derecho en orden: gráfica arriba, botón abajo
+        panel_derecho.add_widget(self.grafica)
+        panel_derecho.add_widget(self.boton_guardar)
 
         # Pestaña 1: Calentamiento
         tab_calentamiento = TabbedPanelItem(text="Calentamiento")
@@ -72,7 +84,7 @@ class TesterApp(App):
 
         # Añadimos todo a la zona de trabajo
         zona_trabajo.add_widget(tabs)
-        zona_trabajo.add_widget(self.grafica)
+        zona_trabajo.add_widget(panel_derecho)
         main_layout.add_widget(zona_trabajo)
 
         # Estilo visual

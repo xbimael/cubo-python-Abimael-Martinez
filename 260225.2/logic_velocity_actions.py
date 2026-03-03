@@ -45,7 +45,7 @@ class ModoVelocityActions(BoxLayout):
             kp_v = float(kp)
             ki_v = float(ki)
             kd_v = float(kd)
-            ref_v = float(ref) # Voltios de referencia
+            ref_v = float(ref)
             tsim = float(t_sim)
             
             self.tsim_limite = tsim
@@ -94,11 +94,8 @@ class ModoVelocityActions(BoxLayout):
 
     def leer_datos(self, dt):
         arduino = self.conexion_ref.arduino
-        
-        # Leemos el lote acumulado tal como lo hacía el while en MATLAB
         while arduino.ser.in_waiting >= 3:
             try:
-                # fscanf(app.sp,'%f');
                 linea_out = arduino.ser.readline().decode('utf-8').strip()
                 linea_time = arduino.ser.readline().decode('utf-8').strip()
                 linea_volt = arduino.ser.readline().decode('utf-8').strip()
@@ -108,36 +105,43 @@ class ModoVelocityActions(BoxLayout):
                 
                 dato_salida = float(linea_out)
                 dato_tiempo = float(linea_time)
-                # En MATLAB convertían el dato_tension a voltios reales:
-                # app.voltage=[app.voltage dato_tension*12/255];
-                # Para la gráfica de salida (rpm/rads) guardamos dato_salida
+                dato_volt_raw = float(linea_volt) # <--- CAPTURAMOS EL VOLTAJE
                 
-                self.datos_acumulados.append((dato_tiempo, dato_salida))
+                # IMPORTANTE: Guardar los TRES datos para que luego p[2] exista
+                self.datos_acumulados.append((dato_tiempo, dato_salida, dato_volt_raw))
                 
                 if dato_tiempo >= self.tsim_limite:
                     self.finalizar_y_graficar()
                     return False
-            except Exception as e:
-                print(f"Error parseo: {e}")
+            except:
                 break
         return True
 
     def finalizar_y_graficar(self):
+        # 1. Detener la lectura del reloj
         Clock.unschedule(self.leer_datos)
         
         if self.datos_acumulados:
-            # 1. Extraer los valores de salida crudos
-            valores_crudos = [p[1] for p in self.datos_acumulados]
+            # Separamos los datos que fuimos guardando en leer_datos
+            # Supongamos que guardaste: (tiempo, salida, tension_raw)
             tiempos = [p[0] for p in self.datos_acumulados]
+            salidas = [p[1] for p in self.datos_acumulados]
             
-            # 2. Aplicar el filtro
-            valores_filtrados = self.aplicar_filtro_media_movil(valores_crudos, ventana=13)
+            # Aplicamos la conversión de tensión de tu MATLAB: dato * 12 / 255
+            voltajes = [p[2] * 12 / 255 for p in self.datos_acumulados]
             
-            # 3. Reconstruir los puntos filtrados (tiempo, valor_filtrado)
-            self.datos_filtrados = list(zip(tiempos, valores_filtrados))
+            # 2. Aplicamos el filtro (el valor 'ventana' según el modo de MATLAB)
+            # MATLAB usaba 13 para Velocity y 7 para Position
+            ventana = 7 if "Position" in self.__class__.__name__ else 13
+            filtrados = self.aplicar_filtro_media_movil(salidas, ventana=ventana)
             
-            # 4. Graficar los datos filtrados
+            # 3. LLAMADA CLAVE: Enviamos los 4 vectores al monitor gráfico
             if self.grafica_ref:
-                self.grafica_ref.dibujar_lote(self.datos_filtrados)                
+                self.grafica_ref.actualizar_datos_completos(
+                    tiempos,   # t
+                    voltajes,  # v
+                    salidas,   # out
+                    filtrados  # filt
+                )
         
-        print("Simulación Finalizada y Filtrada")
+        print(f"Simulación de {self.__class__.__name__} finalizada.")
