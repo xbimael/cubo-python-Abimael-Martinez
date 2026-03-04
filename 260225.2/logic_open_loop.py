@@ -38,6 +38,7 @@ class ModoOpenLoop(BoxLayout):
     def ejecutar_open_loop(self, v_input, t_sim):
         try:
             v = float(v_input)
+            self.referencia_actual = v
             u = v * 255 / 12
             tsim = float(t_sim)
             
@@ -86,30 +87,25 @@ class ModoOpenLoop(BoxLayout):
         return True
 
     def finalizar_y_graficar(self):
-        # 1. Detener la lectura del reloj
         Clock.unschedule(self.leer_datos)
         
         if self.datos_acumulados:
-            # Separamos los datos que fuimos guardando en leer_datos
-            # Supongamos que guardaste: (tiempo, salida, tension_raw)
             tiempos = [p[0] for p in self.datos_acumulados]
             salidas = [p[1] for p in self.datos_acumulados]
-            
-            # Aplicamos la conversión de tensión de tu MATLAB: dato * 12 / 255
             voltajes = [p[2] * 12 / 255 for p in self.datos_acumulados]
             
-            # 2. Aplicamos el filtro (el valor 'ventana' según el modo de MATLAB)
-            # MATLAB usaba 13 para Velocity y 7 para Position
             ventana = 7 if "Position" in self.__class__.__name__ else 13
             filtrados = self.aplicar_filtro_media_movil(salidas, ventana=ventana)
             
-            # 3. LLAMADA CLAVE: Enviamos los 4 vectores al monitor gráfico
+            val_ref = getattr(self, 'referencia_actual', 0.0)
+
             if self.grafica_ref:
                 self.grafica_ref.actualizar_datos_completos(
-                    tiempos,   # t
-                    voltajes,  # v
-                    salidas,   # out
-                    filtrados  # filt
+                    tiempos, 
+                    voltajes, 
+                    salidas, 
+                    filtrados,
+                    ref_val=val_ref
                 )
         
         print(f"Simulación de {self.__class__.__name__} finalizada.")

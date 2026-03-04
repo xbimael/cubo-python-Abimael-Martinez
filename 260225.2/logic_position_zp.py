@@ -48,8 +48,9 @@ class ModoPositionZP(BoxLayout):
             p_val = float(p)
             ci_val = float(ci)
             pi_val = float(pi)
-            r_ef = float(ref)
-            
+            ref_v = float(ref)
+
+            self.referencia_actual = ref_v
             self.tsim_limite = tsim
             self.datos_acumulados = []
             
@@ -64,7 +65,7 @@ class ModoPositionZP(BoxLayout):
             # MATLAB envía: Modo, Ref, Tsim, K, C, P, Ci, Pi
             arduino.ser.write(b"6\n")
             time.sleep(0.05)
-            for val in [r_ef, tsim, k_val, c_val, p_val, ci_val, pi_val]:
+            for val in [ref_v, tsim, k_val, c_val, p_val, ci_val, pi_val]:
                 arduino.ser.write(f"{val}\n".encode())
                 time.sleep(0.02)
             
@@ -118,13 +119,16 @@ class ModoPositionZP(BoxLayout):
             ventana = 7 if "Position" in self.__class__.__name__ else 13
             filtrados = self.aplicar_filtro_media_movil(salidas, ventana=ventana)
             
+            val_ref = getattr(self, 'referencia_actual', 0.0)
+
             # 3. LLAMADA CLAVE: Enviamos los 4 vectores al monitor gráfico
             if self.grafica_ref:
                 self.grafica_ref.actualizar_datos_completos(
                     tiempos,   # t
                     voltajes,  # v
                     salidas,   # out
-                    filtrados  # filt
+                    filtrados,  # filt
+                    ref_val=val_ref
                 )
         
         print(f"Simulación de {self.__class__.__name__} finalizada.")

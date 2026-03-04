@@ -48,6 +48,7 @@ class ModoVelocityActions(BoxLayout):
             ref_v = float(ref)
             tsim = float(t_sim)
             
+            self.referencia_actual = ref_v
             self.tsim_limite = tsim
             self.datos_acumulados = []
             
@@ -135,13 +136,16 @@ class ModoVelocityActions(BoxLayout):
             ventana = 7 if "Position" in self.__class__.__name__ else 13
             filtrados = self.aplicar_filtro_media_movil(salidas, ventana=ventana)
             
+            val_ref = getattr(self, 'referencia_actual', 0.0)
+
             # 3. LLAMADA CLAVE: Enviamos los 4 vectores al monitor gráfico
             if self.grafica_ref:
                 self.grafica_ref.actualizar_datos_completos(
                     tiempos,   # t
                     voltajes,  # v
                     salidas,   # out
-                    filtrados  # filt
+                    filtrados,  # filt
+                    ref_val=val_ref
                 )
         
         print(f"Simulación de {self.__class__.__name__} finalizada.")

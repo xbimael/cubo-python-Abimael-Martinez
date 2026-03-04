@@ -14,28 +14,37 @@ class MonitorGrafico(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.plot = MeshLinePlot(color=[0, 0.7, 1, 1])
-        # Aseguramos que la lista esté limpia al iniciar
+        self.plot_ref = MeshLinePlot(color=[1, 0, 0, 1])
         self.experiment = [] 
         
         # Un pequeño truco: usamos Clock para evitar el error de inicialización
         from kivy.clock import Clock
-        Clock.schedule_once(lambda dt: self.graph.add_plot(self.plot))
+        Clock.schedule_once(lambda dt: self.vincular_plots())
+
+    def vincular_plots(self):
+        if self.graph:
+            self.graph.add_plot(self.plot)
+            self.graph.add_plot(self.plot_ref)
 
     def limpiar_grafica(self, x_max=10):
         self.plot.points = []
+        self.plot_ref.points = []
         self.experiment = [] # ### LIMPIAMOS también los datos de guardado
         self.graph.xmin, self.graph.xmax = 0, x_max
         self.graph.ymin, self.graph.ymax = 0, 1
         self.actualizar_marcas()
 
     # --- NUEVO MÉTODO PARA RECIBIR LOS 4 DATOS DE MATLAB ---
-    def actualizar_datos_completos(self, tiempos, voltajes, salidas, filtrados):
-        # 1. Creamos la estructura [t, v, out, filt] para el .txt
+    def actualizar_datos_completos(self, tiempos, voltajes, salidas, filtrados, ref_val=None):
         self.experiment = list(zip(tiempos, voltajes, salidas, filtrados))
         
-        # 2. Dibujamos en la gráfica solo (tiempo, filtrado) o (tiempo, salida)
-        # Aquí usamos la función que ya tenías
+        # Dibujamos la señal filtrada
         self.dibujar_lote(list(zip(tiempos, filtrados)))
+
+        # Si nos pasan una referencia, dibujamos la línea horizontal
+        if ref_val is not None and tiempos:
+            # Creamos dos puntos: uno al inicio (0, ref) y otro al final (t_final, ref)
+            self.plot_ref.points = [(0, ref_val), (tiempos[-1], ref_val)]
 
     def actualizar_marcas(self):
         if not self.graph: return
@@ -61,7 +70,7 @@ class MonitorGrafico(BoxLayout):
         elif rango_y <= 50: 
             self.graph.y_ticks_major = 5    # Salen etiquetas cada 5
         else: 
-            self.graph.y_ticks_major = 10   # Salen etiquetas cada 10
+            self.graph.y_ticks_major = 10   # Salen etiquetas cada 10   
 
     def añadir_punto(self, x, y):
         self.plot.points.append((x, y))
