@@ -95,3 +95,43 @@ class MonitorGrafico(BoxLayout):
             self.graph.ymax = math.ceil(max(1, max_y) / 5.0) * 5
             self.graph.ymin = math.floor(min(0, min_y) / 5.0) * 5
             self.actualizar_marcas()
+
+    def on_touch_down(self, touch):
+        if self.graph and self.graph.collide_point(*touch.pos):
+            
+            # 1. OBTENER EL ÁREA DE DIBUJO REAL (Sincronización exacta)
+            # view_pos[0] nos dice cuántos píxeles ocupa el eje Y (el margen izquierdo)
+            # view_size[0] nos dice el ancho exacto de la cuadrícula (el área útil)
+            x_margen_izquierdo = self.graph.view_pos[0]
+            ancho_cuadricula = self.graph.view_size[0]
+            
+            # 2. CALCULAR POSICIÓN RELATIVA AL ÁREA DE DIBUJO
+            # touch.x es la pantalla, self.graph.x + x_margen_izquierdo es donde empieza el 0
+            x_pixel_dentro = touch.x - (self.graph.x + x_margen_izquierdo)
+            
+            # Convertimos a porcentaje (0.0 en el eje Y, 1.0 al final de la cuadrícula)
+            porcentaje_x = max(0, min(1, x_pixel_dentro / ancho_cuadricula))
+            
+            # 3. CONVERTIR A TIEMPO
+            rango_tiempo = self.graph.xmax - self.graph.xmin
+            x_data = self.graph.xmin + (porcentaje_x * rango_tiempo)
+            
+            # 4. BÚSQUEDA DEL PUNTO (Usando self.plot)
+            puntos = self.plot.points
+            if puntos:
+                punto_seleccionado = puntos[0]
+                min_distancia = abs(puntos[0][0] - x_data)
+
+                for p in puntos:
+                    distancia_actual = abs(p[0] - x_data)
+                    if distancia_actual < min_distancia:
+                        min_distancia = distancia_actual
+                        punto_seleccionado = p
+                
+                # 5. ACTUALIZAR INTERFAZ
+                self.ids.lbl_punto_x.text = f"Tiempo: {punto_seleccionado[0]:.3f} s"
+                self.ids.lbl_punto_y.text = f"Salida: {punto_seleccionado[1]:.3f} rad/s"
+            
+            return True
+            
+        return super().on_touch_down(touch)

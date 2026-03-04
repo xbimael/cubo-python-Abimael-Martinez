@@ -25,3 +25,38 @@
             y_ticks_major: 0.1    # Un número cada 0.1 unidades (antes era 0.2)
             x_ticks_minor: 5      # 5 subdivisiones entre números
             y_ticks_minor: 5      # 2 subdivisiones entre números
+
+    BoxLayout:
+        size_hint_y: None
+        height: '60dp'
+        orientation: 'horizontal'
+        padding: [10, 5]
+        spacing: 10
+        canvas.before:
+            Color:
+                rgba: 0.15, 0.15, 0.15, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # Etiqueta de Título
+        Label:
+            text: "PUNTO SELECCIONADO:"
+            color: 0, 0.7, 1, 1
+            bold: True
+            size_hint_x: 0.3
+
+        # Valores de X e Y
+        Label:
+            id: lbl_punto_x
+            text: "Tiempo: --- s"
+            halign: 'left'
+            text_size: self.size
+            valign: 'middle'
+
+        Label:
+            id: lbl_punto_y
+            text: "Valor: --- rad/s"
+            halign: 'left'
+            text_size: self.size
+            valign: 'middle'
