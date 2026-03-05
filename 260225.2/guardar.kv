@@ -2,16 +2,16 @@
     # Ajustes del contenedor del botón
     orientation: 'horizontal'
     size_hint_y: None
-    height: '50dp'
-    padding: [10, 5, 10, 5] # [izq, arriba, der, abajo]
+    height: '60dp'
+    padding: [10, 5, 10, 15] # [izq, arriba, der, abajo]
 
     Button:
         text: "GUARDAR RESULTADOS (.txt)"
         font_size: '14sp'
         bold: True
+        height: '50dp'
         # Color verde tipo "Excel/Guardar" (RGBA)
         background_normal: ''
-        background_color: (0.1, 0.5, 0.2, 1)
-        
+        background_color: app.VERDE
         # Al presionar, llama a la función de la lógica
         on_release: root.guardar_txt()

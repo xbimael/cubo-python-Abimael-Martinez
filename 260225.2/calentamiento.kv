@@ -1,42 +1,38 @@
 <ModoCalentamiento>:
     orientation: 'vertical'
-    padding: 20
+    padding: 15
     spacing: 15
-    size_hint_y: None
-    height: '200dp'
-
-    canvas.before:
-        Color:
-            rgba: 0.2, 0.2, 0.2, 1
-        RoundedRectangle:
-            pos: self.pos
-            size: self.size
-            radius: [10,]
 
     Label:
-        text: "MODO 1: CALENTAMIENTO"
-        bold: True
-        size_hint_y: None
-        height: '30dp'
-
-    BoxLayout:
-        orientation: 'horizontal'
-        spacing: 10
+        text: "CALENTAMIENTO"
         size_hint_y: None
         height: '40dp'
+        bold: True
+        color: app.AZUL
+
+    GridLayout:
+        cols: 2
+        spacing: 10
+        row_default_height: '35dp'
+        row_force_default: True
 
         Label:
-            text: "Tiempo (s):"
-            size_hint_x: 0.4
-
+            text: "Tiempo Simulación (s):"
         TextInput:
-            id: tiempo_input
+            id: t_input
             text: "10"
             multiline: False
-            input_filter: 'int'
-            size_hint_x: 0.6
+            input_filter: 'float'
+
+    Widget:
+        size_hint_y: 1
 
     Button:
         id: btn_ejecutar
-        text: "INICIAR CALENTAMIENTO"
-        on_release: root.ejecutar_modo(tiempo_input.text) # SIN paréntesis al final de la línea
+        text: "EJECUTAR"
+        size_hint_y: None
+        height: '50dp'
+        bold: True
+        background_normal: ''
+        background_color: app.AZUL
+        on_release: root.ejecutar_modo(t_input.text)

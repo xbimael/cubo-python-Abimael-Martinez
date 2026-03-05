@@ -1,19 +1,19 @@
 <ModoVelocityZP>:
     orientation: 'vertical'
     padding: 15
-    spacing: 5
+    spacing: 15
     
     Label:
         text: "VELOCITY CONTROL (ZEROS/POLES)"
         size_hint_y: None
-        height: '30dp'
+        height: '40dp'
         bold: True
-        color: (0.8, 0.4, 0, 1)
+        color: app.NARANJA
 
     GridLayout:
         cols: 2
-        spacing: 5
-        row_default_height: '30dp'
+        spacing: 10
+        row_default_height: '35dp'
         row_force_default: True
 
         Label:
@@ -81,5 +81,5 @@
         height: '50dp'
         bold: True
         background_normal: ''
-        background_color: (0.8, 0.4, 0, 1) 
+        background_color: app.NARANJA
         on_release: root.ejecutar_velocity_zp(k_input.text, c_input.text, p_input.text, ci_input.text, pi_input.text, ref_input.text, t_input.text)

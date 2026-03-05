@@ -1,19 +1,19 @@
 <ModoPositionZP>:
     orientation: 'vertical'
-    spacing: 10
-    padding: 10
+    spacing: 15
+    padding: 15
 
     Label:
         text: "POSITION CONTROL (Z/P)"
         bold: True
         size_hint_y: None
         height: '40dp'
-        color: (0.8, 0, 0.5, 1) # Púrpura
+        color: app.LILA
 
     GridLayout:
         cols: 2
-        spacing: 5
-        row_default_height: '30dp'
+        spacing: 10
+        row_default_height: '35dp'
         row_force_default: True
         
         Label: 
@@ -79,5 +79,6 @@
         text: "EJECUTAR"
         size_hint_y: None
         height: '50dp'
-        background_color: (0.8, 0, 0.5, 1)
+        background_normal: ''
+        background_color: app.LILA
         on_release: root.ejecutar_position_zp(k_in.text, c_in.text, p_in.text, ci_in.text, pi_in.text, ref_in.text, t_in.text)

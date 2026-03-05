@@ -1,7 +1,7 @@
 import math
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
-from kivy_garden.graph import MeshLinePlot
+from kivy_garden.graph import MeshLinePlot, PointPlot
 from kivy.properties import ObjectProperty, ListProperty
 
 Builder.load_file('monitor_grafico.kv')
@@ -15,6 +15,8 @@ class MonitorGrafico(BoxLayout):
         super().__init__(**kwargs)
         self.plot = MeshLinePlot(color=[0, 0.7, 1, 1])
         self.plot_ref = MeshLinePlot(color=[1, 0, 0, 1])
+        self.plot_cursor = PointPlot(color=[1, 1, 0, 1])
+        self.plot_cursor.point_size = 5
         self.experiment = [] 
         
         # Un pequeño truco: usamos Clock para evitar el error de inicialización
@@ -29,7 +31,10 @@ class MonitorGrafico(BoxLayout):
     def limpiar_grafica(self, x_max=10):
         self.plot.points = []
         self.plot_ref.points = []
-        self.experiment = [] # ### LIMPIAMOS también los datos de guardado
+        self.plot_cursor.points = []
+        self.ids.lbl_punto_x.text = "Tiempo: --- s"
+        self.ids.lbl_punto_y.text = "Valor: --- rad/s"
+        self.experiment = []
         self.graph.xmin, self.graph.xmax = 0, x_max
         self.graph.ymin, self.graph.ymax = 0, 1
         self.actualizar_marcas()
@@ -127,8 +132,15 @@ class MonitorGrafico(BoxLayout):
                     if distancia_actual < min_distancia:
                         min_distancia = distancia_actual
                         punto_seleccionado = p
+
+                # 5. MOSTRAR CURSOR EN EL PUNTO SELECCIONADO
+                if self.plot_cursor not in self.graph.plots:
+                    self.graph.add_plot(self.plot_cursor)
                 
-                # 5. ACTUALIZAR INTERFAZ
+                # Importante: PointPlot espera una lista de puntos
+                self.plot_cursor.points = [punto_seleccionado]
+                
+                # 6. ACTUALIZAR INTERFAZ
                 self.ids.lbl_punto_x.text = f"Tiempo: {punto_seleccionado[0]:.3f} s"
                 self.ids.lbl_punto_y.text = f"Salida: {punto_seleccionado[1]:.3f} rad/s"
             

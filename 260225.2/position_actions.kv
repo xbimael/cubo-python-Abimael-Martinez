@@ -1,15 +1,14 @@
 <ModoPositionActions>:
     orientation: 'vertical'
-    spacing: 10
-    padding: 10
+    spacing: 15
+    padding: 15
 
     Label:
         text: "POSITION CONTROL (ACTIONS)"
         bold: True
         size_hint_y: None
         height: '40dp'
-        color: (0, 0.5, 0.8, 1) # Azul claro
-
+        color: app.LILA
     GridLayout:
         cols: 2
         spacing: 10
@@ -63,5 +62,6 @@
         text: "EJECUTAR"
         size_hint_y: None
         height: '50dp'
-        background_color: (0, 0.5, 0.8, 1)
+        background_normal: ''
+        background_color: app.LILA
         on_release: root.ejecutar_position_actions(kp_input.text, ki_input.text, kd_input.text, ref_input.text, t_input.text)

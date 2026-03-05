@@ -6,21 +6,18 @@
     Label:
         text: "CONFIGURACIÓN LAZO ABIERTO"
         size_hint_y: None
-        height: '30dp'
+        height: '40dp'
         bold: True
-        color: (0, 0.7, 1, 1)
+        color: app.AZUL
 
     GridLayout:
         cols: 2
-        spacing: 15
-        row_default_height: '40dp'
+        spacing: 10
+        row_default_height: '35dp'
         row_force_default: True
 
         Label:
             text: "Voltaje de Entrada (V):"
-            halign: 'left'
-            text_size: self.size
-
         TextInput:
             id: v_input
             text: "10"
@@ -29,9 +26,6 @@
 
         Label:
             text: "Tiempo Simulación (s):"
-            halign: 'left'
-            text_size: self.size
-
         TextInput:
             id: t_input
             text: "3"
@@ -49,5 +43,5 @@
         bold: True
         # Eliminada la dependencia de conexion_ref
         background_normal: ''
-        background_color: (0, 0.5, 0.8, 1) 
+        background_color: app.AZUL
         on_release: root.ejecutar_open_loop(v_input.text, t_input.text)

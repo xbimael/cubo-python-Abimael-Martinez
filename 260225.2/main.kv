@@ -1,0 +1,53 @@
+<BoxLayout>:
+    # Quitamos el fondo global de todos los BoxLayouts para que no se pisen
+    canvas.before:
+        Color:
+            rgba: 0.06, 0.07, 0.1, 1 # Fondo muy oscuro (pestaña fondo app)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<TabbedPanel>:
+    background_color: 0, 0, 0, 0  # Transparente
+    background_image: ''
+    background_content: ''
+    tab_width: 1
+    padding: 5
+    canvas.before:
+        Color:
+            rgba: 0.1, 0.12, 0.15, 1 # Color de la "tarjeta" de contenido
+        RoundedRectangle:
+            pos: self.x, self.y
+            size: self.width, self.height - self.tab_height
+            radius: [0, 0, 10, 10]
+
+<TabbedPanelItem>:
+    background_normal: ''
+    background_down: ''
+    background_color: 0, 0, 0, 0 # Lo dibujamos manualmente en el canvas
+    color: [1, 1, 1, 1] if self.state == 'normal' else [0, 0.9, 1, 1]
+    bold: True
+    font_size: '12sp'
+    canvas.before:
+        Color:
+            rgba: (0.1, 0.12, 0.15, 1) if self.state == 'normal' else (0.15, 0.18, 0.25, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.width, self.height + 5 # Un poco más alto para solapar
+            radius: [10, 10, 0, 0]
+        Color:
+            rgba: (0, 0.9, 1, 1) if self.state == 'down' or self.state == 'down' else (0,0,0,0)
+        Line:
+            points: [self.x + 10, self.y + 2, self.x + self.width - 10, self.y + 2]
+            width: 1.5
+
+<Button>:
+    background_normal: ''
+    background_color: 0, 0, 0, 0
+    canvas.before:
+        Color:
+            rgba: (0, 0.7, 1, 1) if self.state == 'normal' else (0, 0.5, 0.8, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [5,]
