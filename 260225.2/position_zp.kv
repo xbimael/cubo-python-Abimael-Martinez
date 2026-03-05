@@ -4,12 +4,17 @@
     padding: 15
 
     Label:
-        text: "POSITION CONTROL (Z/P)"
+        text: "POSITION CONTROL (ZEROS/POLES)"
         bold: True
         size_hint_y: None
         height: '40dp'
         color: app.LILA
 
+    BoxLayout:
+        id: contenedor_export_latex
+        size_hint_y: None
+        height: '100dp'  # Ajusta según quieras de grande la fórmula
+        
     GridLayout:
         cols: 2
         spacing: 10
@@ -71,7 +76,7 @@
             text: "3"
             multiline: False
             input_filter: 'float'
-    
+
     Widget: 
         size_hint_y: 1
     

@@ -5,6 +5,7 @@ from kivy.clock import Clock
 import numpy as np
 import time
 import math
+from utils import crear_ecuacion_latex
 
 # Cargamos el diseño KV
 Builder.load_file('position_actions.kv')
@@ -17,6 +18,13 @@ class ModoPositionActions(BoxLayout):
         super().__init__(**kwargs)
         self.datos_acumulados = []
         self.tsim_limite = 0
+        Clock.schedule_once(self._insertar_ecuacion)
+
+    def _insertar_ecuacion(self, dt):
+        # Definimos la fórmula
+        formula = r'R(s) = k_p + k_i \cdot \frac{1}{s} + k_d \cdot s'
+        widget_latex = crear_ecuacion_latex(formula, altura='100dp')
+        self.ids.contenedor_export_latex.add_widget(widget_latex)
 
     def aplicar_filtro_media_movil(self, datos, ventana=13):
         """Implementa un suavizado básico similar a sgolayfilt."""
