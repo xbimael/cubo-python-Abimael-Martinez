@@ -1,0 +1,80 @@
+<MonitorGrafico>:
+    orientation: 'vertical'
+    padding: dp(10)
+    spacing: dp(10)
+    graph: graph_id 
+
+    MDBoxLayout:
+        id: graph_container
+        orientation: 'vertical'
+        padding: dp(5)
+        
+        # El botón de la lupa ahora es un componente nativo de Material
+        MDIconButton:
+            icon: "magnify-plus-outline"
+            pos_hint: {"right": 1}
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            md_bg_color: app.theme_cls.primary_color
+            size_hint: (None, None)
+            size: dp(12), dp(12)
+            on_release: root.abrir_grafico_externo()
+
+        Graph:
+            id: graph_id
+            xlabel: 't (s)'
+            ylabel: 'rad/s'
+            xmin: 0
+            xmax: 10
+            ymin: 0
+            ymax: 1
+            x_grid: True
+            y_grid: True
+            x_grid_label: True
+            y_grid_label: True
+            padding: dp(5)
+            label_options: {'color': [0, 0, 0, 1], 'bold': True}
+            background_color: 1, 1, 1, 1
+            tick_color: 0.2, 0.2, 0.2, 1 
+            border_color: 0, 0, 0, 1
+            x_ticks_major: 1
+            y_ticks_major: 0.1
+            x_ticks_minor: 5
+            y_ticks_minor: 5
+
+    # Panel inferior de datos estilo "Card"
+    MDCard:
+        size_hint_y: None
+        height: dp(60)
+        orientation: 'vertical'
+        padding: dp(12)
+        spacing: dp(8)
+        radius: [dp(15),]
+        elevation: 2
+        md_bg_color: app.theme_cls.bg_darkest
+
+        MDLabel:
+            text: "PUNTO SELECCIONADO"
+            theme_text_color: "Primary"
+            font_style: "Button"
+            halign: "center"
+            size_hint_y: None
+            height: dp(20)
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: dp(20)
+
+            MDLabel:
+                id: lbl_punto_x
+                text: "Tiempo: --- s"
+                halign: "center"
+                font_style: "Caption"
+                theme_text_color: "Secondary"
+
+            MDLabel:
+                id: lbl_punto_y
+                text: "Valor: --- rad/s"
+                halign: "center"
+                font_style: "Caption"
+                theme_text_color: "Secondary"

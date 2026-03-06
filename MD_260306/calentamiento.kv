@@ -1,0 +1,44 @@
+<ModoCalentamiento>:
+    # Usamos MDBoxLayout para mayor compatibilidad
+    orientation: 'vertical'
+    padding: dp(25)
+    spacing: dp(20)
+
+    # Título estilizado con tipografía Material
+    MDLabel:
+        text: "WARM UP - CALENTAMIENTO"
+        size_hint_y: None
+        height: dp(40)
+        halign: "center"
+        font_style: "H6"
+        theme_text_color: "Primary"
+
+    # Contenedor para los parámetros
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+        height: self.minimum_height
+        spacing: dp(10)
+
+        MDTextField:
+            id: t_input
+            text: "10"
+            hint_text: "Tiempo de Simulación (s)"
+            helper_text: "Tiempo que el sistema estará activo para calentar"
+            helper_text_mode: "on_focus"
+            input_filter: 'float'
+            mode: "rectangle"
+            icon_left: "clock-outline" # Icono temático de reloj
+
+    # Espacio flexible que empuja el botón hacia abajo
+    MDFloatLayout:
+        size_hint_y: 1
+
+    # Botón de acción con estilo Material
+    MDRaisedButton:
+        id: btn_ejecutar
+        text: "EJECUTAR"
+        size_hint_x: 0.8
+        pos_hint: {"center_x": .5}
+        md_bg_color: app.theme_cls.primary_color
+        on_release: root.ejecutar_modo(t_input.text)

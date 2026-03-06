@@ -1,0 +1,48 @@
+<ConexionWidget>:
+    # Usamos MDBoxLayout para heredar las propiedades de Material
+    orientation: 'vertical'
+    size_hint_y: None
+    height: dp(100) # Un poco más compacto y elegante
+    padding: dp(10)
+    spacing: dp(10)
+    md_bg_color: app.theme_cls.bg_dark  # Color de fondo ligeramente distinto para separar
+
+    MDBoxLayout:
+        spacing: dp(15)
+        orientation: 'horizontal'
+
+        # Botón con icono de refrescar
+        MDRaisedButton:
+            text: "BUSCAR"
+            icon: "refresh"
+            size_hint_x: 0.2
+            md_bg_color: app.theme_cls.accent_color
+            on_release: root.actualizar_puertos()
+
+        # El Spinner clásico pero con estilo plano para que no desentone
+        Spinner:
+            id: selector_puerto
+            text: "Puerto"
+            values: []
+            size_hint_x: 0.5
+            background_normal: ''
+            background_color: (0.2, 0.2, 0.2, 1) # Gris oscuro Material
+            color: (1, 1, 1, 1)
+            
+        # Botón de Conexión dinámico
+        MDRaisedButton:
+            id: btn_conectar
+            text: "CONECTAR" if not root.arduino.conectado else "DESCONECTAR"
+            size_hint_x: 0.3
+            # Cambia de color según el estado: azul si desconectado, rojo/naranja si conectado
+            md_bg_color: (0.1, 0.6, 0.2, 1) if not root.arduino.conectado else (0.8, 0.3, 0.2, 1)
+            on_release: root.gestionar_conexion(selector_puerto.text)
+
+    # Etiqueta de estado con tipografía Material
+    MDLabel:
+        id: estado_label
+        text: "Estado: " + ("Conectado" if root.arduino.conectado else "Desconectado")
+        halign: "center"
+        theme_text_color: "Custom"
+        text_color: (0.3, 1, 0.3, 1) if root.arduino.conectado else (1, 1, 1, 0.7)
+        font_style: "Caption" # Texto pequeño y profesional
