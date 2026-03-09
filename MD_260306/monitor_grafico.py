@@ -2,21 +2,24 @@ import math
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy_garden.graph import MeshLinePlot, PointPlot
-from kivy.properties import ObjectProperty, ListProperty
+from kivy.properties import ObjectProperty, ListProperty, StringProperty
+from kivy_garden.graph import LinePlot, PointPlot
 from utils import abrir_ventana_interactiva
+from guardar import GuardarResultadosWidget
 
 Builder.load_file('monitor_grafico.kv')
 
 class MonitorGrafico(BoxLayout):
+    unidad_y = StringProperty("Output") # Valor por defecto
     graph = ObjectProperty(None)
     experiment = ListProperty([]) 
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.plot = MeshLinePlot(color=[0, 0.7, 1, 1])
-        self.plot_ref = MeshLinePlot(color=[1, 0, 0, 1])
-        self.plot_cursor = PointPlot(color=[1, 1, 0, 1])
-        self.plot_cursor.point_size = 5
+        self.plot = LinePlot(color=[0, 0.7, 1, 1], line_width=2.5) 
+        self.plot_ref = LinePlot(color=[1, 0, 0, 1], line_width=1.5)
+        self.plot_cursor = PointPlot(color=[0, 0.5, 0, 1])
+        self.plot_cursor.point_size = 8
         self.experiment = [] 
         self.ultimos_datos_recibidos = []
         self.ultima_referencia = 0
@@ -30,12 +33,15 @@ class MonitorGrafico(BoxLayout):
             self.graph.add_plot(self.plot)
             self.graph.add_plot(self.plot_ref)
 
+    # Este método se asegura de que el Graph se actualice al cambiar la propiedad
+    def on_unidad_y(self, instance, value):
+        self.ids.graph_id.ylabel = value
+        self.ids.lbl_punto_y.text = f"Output: --- {value}"
+
     def limpiar_grafica(self, x_max=10):
         self.plot.points = []
         self.plot_ref.points = []
         self.plot_cursor.points = []
-        self.ids.lbl_punto_x.text = "Tiempo: --- s"
-        self.ids.lbl_punto_y.text = "Valor: --- rad/s"
         self.experiment = []
         self.graph.xmin, self.graph.xmax = 0, x_max
         self.graph.ymin, self.graph.ymax = 0, 1
@@ -106,6 +112,29 @@ class MonitorGrafico(BoxLayout):
             self.graph.ymin = math.floor(min(0, min_y) / 5.0) * 5
             self.actualizar_marcas()
 
+    def disparar_guardado(self):
+        # 1. Verificamos si tenemos datos en 'experiment' (que ya llenamos en actualizar_datos_completos)
+        if not self.experiment:
+            print("Error: No data available for saving.")
+            return
+
+        try:
+            print(f"Abriendo diálogo de guardado para: {self.unidad_y}...")
+            
+            # 2. Instanciamos el widget de guardado (el que importaste de guardar.py)
+            escritor = GuardarResultadosWidget()
+            
+            # 3. CONEXIÓN CLAVE:
+            # Tu script busca: datos = getattr(self.grafica_ref, 'experiment', [])
+            # Así que le decimos que su fuente de datos (grafica_ref) es este mismo Monitor.
+            escritor.grafica_ref = self
+            
+            # 4. Ejecutamos la lógica de tu script (el diálogo de Tkinter y la escritura)
+            escritor.guardar_txt()
+            
+        except Exception as e:
+            print(f"Error: {e}")
+
     def on_touch_down(self, touch):
         if self.graph and self.graph.collide_point(*touch.pos):
             
@@ -146,8 +175,8 @@ class MonitorGrafico(BoxLayout):
                 self.plot_cursor.points = [punto_seleccionado]
                 
                 # 6. ACTUALIZAR INTERFAZ
-                self.ids.lbl_punto_x.text = f"Tiempo: {punto_seleccionado[0]:.3f} s"
-                self.ids.lbl_punto_y.text = f"Salida: {punto_seleccionado[1]:.3f} rad/s"
+                self.ids.lbl_punto_x.text = f"Time: {punto_seleccionado[0]:.3f} s"
+                self.ids.lbl_punto_y.text = f"Output: {punto_seleccionado[1]:.3f} {self.unidad_y}"
             
             return True            
         return super().on_touch_down(touch)
@@ -157,7 +186,7 @@ class MonitorGrafico(BoxLayout):
             abrir_ventana_interactiva(
                 self.ultimos_datos_recibidos, 
                 self.ultima_referencia,
-                titulo="Análisis de Control Externo"
+                titulo="Control Analysis - Interactive Plot"
             )
         else:
             print("Aviso: No hay datos acumulados en el monitor todavía.")

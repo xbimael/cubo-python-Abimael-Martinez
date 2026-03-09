@@ -13,7 +13,7 @@
 
         # Botón con icono de refrescar
         MDRaisedButton:
-            text: "BUSCAR"
+            text: "REFRESH"
             icon: "refresh"
             size_hint_x: 0.2
             md_bg_color: app.theme_cls.accent_color
@@ -22,7 +22,7 @@
         # El Spinner clásico pero con estilo plano para que no desentone
         Spinner:
             id: selector_puerto
-            text: "Puerto"
+            text: "SELECT SERIAL PORT"
             values: []
             size_hint_x: 0.5
             background_normal: ''
@@ -32,8 +32,8 @@
         # Botón de Conexión dinámico
         MDRaisedButton:
             id: btn_conectar
-            text: "CONECTAR" if not root.arduino.conectado else "DESCONECTAR"
-            size_hint_x: 0.3
+            text: "CONNECT" if not root.arduino.conectado else "DISCONNECT"
+            size_hint_x: 0.2
             # Cambia de color según el estado: azul si desconectado, rojo/naranja si conectado
             md_bg_color: (0.1, 0.6, 0.2, 1) if not root.arduino.conectado else (0.8, 0.3, 0.2, 1)
             on_release: root.gestionar_conexion(selector_puerto.text)
@@ -41,8 +41,8 @@
     # Etiqueta de estado con tipografía Material
     MDLabel:
         id: estado_label
-        text: "Estado: " + ("Conectado" if root.arduino.conectado else "Desconectado")
+        text: "STATE: " + ("CONNECTED" if root.arduino.conectado else "DISCONNECTED")
         halign: "center"
         theme_text_color: "Custom"
-        text_color: (0.3, 1, 0.3, 1) if root.arduino.conectado else (1, 1, 1, 0.7)
+        text_color: (0.1, 0.8, 0.1, 1) if root.arduino.conectado else (1, 0, 0, 1)
         font_style: "Caption" # Texto pequeño y profesional

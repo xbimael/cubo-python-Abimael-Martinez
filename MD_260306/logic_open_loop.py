@@ -4,6 +4,7 @@ from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 import time
 import math
+from monitor_grafico import MonitorGrafico
 
 # Cargamos el archivo de diseño
 Builder.load_file('open_loop.kv')
@@ -45,6 +46,7 @@ class ModoOpenLoop(BoxLayout):
             self.tsim_limite = tsim
             self.tiempo_actual = 0
             self.datos_acumulados = [] # Limpiamos la lista
+            self.ids.grafico_ensayo.limpiar_grafica(x_max=tsim)
             
             if self.grafica_ref:
                 self.grafica_ref.limpiar_grafica(x_max=tsim)

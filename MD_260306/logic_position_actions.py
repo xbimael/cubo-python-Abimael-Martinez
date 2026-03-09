@@ -6,6 +6,7 @@ import numpy as np
 import time
 import math
 from utils import crear_ecuacion_latex
+from monitor_grafico import MonitorGrafico
 
 # Cargamos el diseño KV
 Builder.load_file('position_actions.kv')
@@ -23,7 +24,7 @@ class ModoPositionActions(BoxLayout):
     def _insertar_ecuacion(self, dt):
         # Definimos la fórmula
         formula = r'R(s) = k_p + k_i \cdot \frac{1}{s} + k_d \cdot s'
-        widget_latex = crear_ecuacion_latex(formula, altura='100dp')
+        widget_latex = crear_ecuacion_latex(formula, altura='90dp')
         self.ids.contenedor_export_latex.add_widget(widget_latex)
 
     def aplicar_filtro_media_movil(self, datos, ventana=13):
@@ -59,8 +60,8 @@ class ModoPositionActions(BoxLayout):
             self.referencia_actual = ref_v
             self.tsim_limite = tsim
             self.datos_acumulados = []
+            self.ids.grafico_ensayo.limpiar_grafica(x_max=tsim)
             
-            # Limpiar gráfica y configurar ejes
             if self.grafica_ref:
                 self.grafica_ref.limpiar_grafica(x_max=tsim)
 

@@ -46,28 +46,28 @@ class TesterApp(MDApp): # <--- Cambio a MDApp
         self.tabs = MDTabs(size_hint_x=0.5)
 
         # --- MONITOR GRÁFICO Y BOTÓN DE GUARDADO ---
-        panel_derecho = MDBoxLayout(orientation='vertical', size_hint_x=0.5, spacing=dp(5))
+        #panel_derecho = MDBoxLayout(orientation='vertical', size_hint_x=0.5, spacing=dp(5))
         
-        self.grafica = MonitorGrafico(size_hint_y=1)
-        self.boton_guardar = GuardarResultadosWidget(grafica_ref=self.grafica)
+        #self.grafica = MonitorGrafico(size_hint_y=1)
+        #self.boton_guardar = GuardarResultadosWidget(grafica_ref=self.grafica)
 
-        panel_derecho.add_widget(self.grafica)
-        panel_derecho.add_widget(self.boton_guardar)
+        #panel_derecho.add_widget(self.grafica)
+        #panel_derecho.add_widget(self.boton_guardar)
 
         # --- CONFIGURACIÓN DE PESTAÑAS ---
         # En MDTabs, cada pestaña se añade con un método específico o vía .kv
         # Por ahora las creamos y las vinculamos
         
-        self._añadir_pestana("WARM UP", ModoCalentamiento(conexion_ref=self.conexion))
-        self._añadir_pestana("OPEN LOOP", ModoOpenLoop(conexion_ref=self.conexion, grafica_ref=self.grafica))
-        self._añadir_pestana("VELOCITY ACTIONS", ModoVelocityActions(conexion_ref=self.conexion, grafica_ref=self.grafica))
-        self._añadir_pestana("VELOCITY ZP", ModoVelocityZP(conexion_ref=self.conexion, grafica_ref=self.grafica))
-        self._añadir_pestana("POSITION ACTIONS", ModoPositionActions(conexion_ref=self.conexion, grafica_ref=self.grafica))
-        self._añadir_pestana("POSITION ZP", ModoPositionZP(conexion_ref=self.conexion, grafica_ref=self.grafica))
+        self._añadir_pestana("MOTOR WARM UP", ModoCalentamiento(conexion_ref=self.conexion))
+        self._añadir_pestana("OPEN LOOP RESPONSE", ModoOpenLoop(conexion_ref=self.conexion))
+        self._añadir_pestana("VELOCITY CONTROL (ACTIONS)", ModoVelocityActions(conexion_ref=self.conexion))
+        self._añadir_pestana("VELOCITY CONTROL (ZEROS/POLES)", ModoVelocityZP(conexion_ref=self.conexion))
+        self._añadir_pestana("POSITION CONTROL (ACTIONS)", ModoPositionActions(conexion_ref=self.conexion))
+        self._añadir_pestana("POSITION CONTROL (ZEROS/POLES)", ModoPositionZP(conexion_ref=self.conexion))
 
         # Ensamblaje final
         zona_trabajo.add_widget(self.tabs)
-        zona_trabajo.add_widget(panel_derecho)
+        #zona_trabajo.add_widget(panel_derecho)
         main_layout.add_widget(zona_trabajo)
 
         return main_layout

@@ -38,14 +38,14 @@ def abrir_ventana_interactiva(datos_acumulados, referencia, titulo="Análisis de
     # -------------------------
 
     if not datos_acumulados:
-        print("No hay datos para mostrar")
+        print("No data")
         return
 
     # Extraemos los datos (asumiendo que vienen como lista de tuplas o zip)
     tiempos, salidas = zip(*datos_acumulados)
     
     plt.figure(titulo, figsize=(9, 5))
-    plt.plot(tiempos, salidas, 'b-', label='Respuesta')
+    plt.plot(tiempos, salidas, 'b-', label='Output')
     plt.axhline(y=referencia, color='r', linestyle='--', label='Ref')
     plt.grid(True)
     plt.legend()

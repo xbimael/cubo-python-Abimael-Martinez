@@ -29,7 +29,7 @@ class GuardarResultadosWidget(BoxLayout):
         datos = getattr(self.grafica_ref, 'experiment', [])
         
         if not datos:
-            print("Aviso: No hay datos de experimento para guardar.")
+            print("Warning: No data available.")
             return
 
         # --- 3. OBTENER RUTA (DIÁLOGO) ---
@@ -40,7 +40,7 @@ class GuardarResultadosWidget(BoxLayout):
             filepath = filedialog.asksaveasfilename(
                 defaultextension=".txt",
                 filetypes=[("Archivo de texto", "*.txt")],
-                title="Guardar resultados como en MATLAB"
+                title="Saving results"
             )
             root.destroy()
         else:
