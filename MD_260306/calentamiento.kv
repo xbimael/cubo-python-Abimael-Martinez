@@ -3,8 +3,15 @@
     spacing: dp(15)
     padding: dp(20)
 
-    MDBoxLayout:
+    MDCard:
+        id: panel_izquierdo
         orientation: 'vertical'
+        size_hint_x: 0.4
+        md_bg_color: app.color_fondo_suave
+        radius: [dp(15),]       # Bordes redondeados
+        elevation: 0            # Plano, como en tu nueva línea estética
+        padding: dp(15)
+        spacing: dp(10)
 
         MDLabel:
             text: "MOTOR WARM UP"
@@ -18,7 +25,7 @@
             size_hint_y: 0.1
 
         MDLabel:
-            text: "Some dynamic parameters of the motor change with the temperature. \nWarming up the motor aids to obtain homogenous results."
+            text: "Some dynamic parameters of the motor change with the temperature. Warming up the motor aids to obtain homogenous results."
             halign: "justify"
             font_style: "Body2"
             theme_text_color: "Secondary" # Gris profesional, no distrae
@@ -54,12 +61,13 @@
             size_hint_y: 1
 
         # Botón de acción con estilo Material
-        MDRaisedButton:
+        MDFillRoundFlatButton:
             id: btn_ejecutar
             text: "WARM UP"
-            size_hint_x: 0.8
-            pos_hint: {"center_x": .5}
-            md_bg_color: app.theme_cls.primary_color
+            font_style: "Button"
+            elevation: 0        
+            md_bg_color: app.color_resaltado
+            text_color: 1, 1, 1, 1 
             on_release: root.ejecutar_modo(t_input.text)
 
     MDBoxLayout:

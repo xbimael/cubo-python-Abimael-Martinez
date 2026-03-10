@@ -58,6 +58,11 @@ class MonitorGrafico(BoxLayout):
             # Creamos dos puntos: uno al inicio (0, ref) y otro al final (t_final, ref)
             self.plot_ref.points = [(0, ref_val), (tiempos[-1], ref_val)]
 
+        if self.plot_ref.color[3] != 0 and ref_val is not None and tiempos:
+            self.plot_ref.points = [(0, ref_val), (tiempos[-1], ref_val)]
+        else:
+            self.plot_ref.points = [] # Forzamos que esté vacía
+            
         # Guardamos los datos en el formato que espera la función de utils (lista de tuplas)
         self.ultimos_datos_recibidos = list(zip(tiempos, filtrados))
         self.ultima_referencia = ref_val

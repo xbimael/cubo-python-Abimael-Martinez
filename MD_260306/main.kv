@@ -2,17 +2,17 @@
 
 # 1. Ajuste del fondo para todos los layouts de MD
 <MDBoxLayout>, <MDFloatLayout>, <MDGridLayout>:
-    md_bg_color: app.theme_cls.bg_normal  # Usa el fondo oscuro oficial de MDApp
+    md_bg_color: app.color_fondo_suave
 
 # 2. Configuración de las Pestañas (MDTabs)
 # No necesitas dibujar RoundedRectangles manualmente, MDTabs ya lo hace.
 <MDTabs>:
-    background_color: app.theme_cls.primary_color
+    background_color: app.color_resaltado
     tab_hint_x: True
     allow_stretch: True
     indicator_color: 1, 1, 1, 1  # Línea blanca debajo de la pestaña activa
-    text_color_normal: 0.8, 0.8, 0.8, 1
-    text_color_active: 1, 1, 1, 1
+    text_color_normal: app.color_borde
+    text_color_active: app.color_resaltado
 
 # 3. Estilo para etiquetas de texto
 <MDLabel>:
@@ -26,7 +26,7 @@
     background_color: 0, 0, 0, 0
     canvas.before:
         Color:
-            rgba: app.theme_cls.primary_color if self.state == 'normal' else app.theme_cls.primary_dark
+            rgba: app.color_resaltado
         RoundedRectangle:
             pos: self.pos
             size: self.size

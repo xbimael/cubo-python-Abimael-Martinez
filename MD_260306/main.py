@@ -1,3 +1,14 @@
+import os
+
+# 1. Forzamos a que Kivy ignore el escalado de Windows
+os.environ['KIVY_METRICS_DENSITY'] = '1'
+# 2. Evitamos que Windows re-escale la ventana (DPI awareness)
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except Exception:
+    pass
+
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
@@ -27,15 +38,16 @@ class Tab(MDFloatLayout, MDTabsBase):
 class TesterApp(MDApp): # <--- Cambio a MDApp
     def build(self):
         # 1. Configuración del Tema Material Design
-        self.theme_cls.primary_palette = "Blue"  # Color principal
-        self.theme_cls.theme_style = "Light"
-        self.theme_cls.primary_hue = "700"
+        self.color_resaltado = [0.12, 0.43, 0.46, 1]  # #1E6D76
+        self.color_borde = [0.24, 0.49, 0.53, 1]      # #3E7E86
+        self.color_fondo_suave = [0.87, 0.91, 0.91, 1] # #DFE7E8
 
         # 2. Contenedor Principal (Usamos MDBoxLayout para sombras y elevación)
         main_layout = MDBoxLayout(orientation='vertical', spacing=dp(10), padding=dp(10))
 
         # 3. Módulo de Conexión
         self.conexion = ConexionWidget()
+        self.conexion.size_hint_y = 0.034
         main_layout.add_widget(self.conexion)
 
         # 4. Zona de trabajo (Horizontal)
@@ -43,16 +55,12 @@ class TesterApp(MDApp): # <--- Cambio a MDApp
 
         # --- PANEL DE PESTAÑAS (MATERIAL DESIGN) ---
         # MDTabs sustituye al TabbedPanel para un look más moderno
-        self.tabs = MDTabs(size_hint_x=0.5)
-
-        # --- MONITOR GRÁFICO Y BOTÓN DE GUARDADO ---
-        #panel_derecho = MDBoxLayout(orientation='vertical', size_hint_x=0.5, spacing=dp(5))
-        
-        #self.grafica = MonitorGrafico(size_hint_y=1)
-        #self.boton_guardar = GuardarResultadosWidget(grafica_ref=self.grafica)
-
-        #panel_derecho.add_widget(self.grafica)
-        #panel_derecho.add_widget(self.boton_guardar)
+        self.tabs = MDTabs(size_hint_x=0.5, 
+                           background_color=self.color_resaltado,
+                           indicator_color=[1, 1, 1, 1],
+                           text_color_active=[1, 1, 1, 1],
+                           text_color_normal=[0.87, 0.91, 0.91, 0.7],
+                           tab_indicator_height=dp(5))
 
         # --- CONFIGURACIÓN DE PESTAÑAS ---
         # En MDTabs, cada pestaña se añade con un método específico o vía .kv

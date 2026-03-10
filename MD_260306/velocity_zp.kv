@@ -6,8 +6,15 @@
     spacing: dp(15)
     padding: dp(20)
 
-    MDBoxLayout:
+    MDCard:
+        id: panel_izquierdo
         orientation: 'vertical'
+        size_hint_x: 0.4
+        md_bg_color: app.color_fondo_suave
+        radius: [dp(15),]     
+        elevation: 0           
+        padding: dp(15)
+        spacing: dp(10)
 
         MDLabel:
             text: "VELOCITY CONTROL (ZEROS/POLES)"
@@ -112,11 +119,13 @@
             size_hint_y: 1
 
         # Botón de ejecución
-        MDRaisedButton:
+        MDFillRoundFlatButton:
+            id: btn_ejecutar
             text: "EXECUTE"
-            size_hint_x: 0.8
-            pos_hint: {"center_x": .5}
-            md_bg_color: app.theme_cls.primary_color
+            font_style: "Button"
+            elevation: 0          
+            md_bg_color: app.color_resaltado
+            text_color: 1, 1, 1, 1 
             on_release: root.ejecutar_velocity_zp(k_input.text, c_input.text, p_input.text, ci_input.text, pi_input.text, ref_input.text, t_input.text)
 
     MDBoxLayout:
