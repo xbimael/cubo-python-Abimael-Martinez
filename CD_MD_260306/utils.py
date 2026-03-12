@@ -31,28 +31,37 @@ def crear_ecuacion_latex(texto_latex, altura='100dp'):
     return KivyImage(texture=textura, size_hint_y=None, height=altura)
 
 def abrir_ventana_interactiva(datos_acumulados, referencia, titulo="Análisis de Datos"):    
-    # Cambiamos el motor de 'Agg' (estático) a uno interactivo
-    # TkAgg viene instalado por defecto con Python
+    # Cambiamos el motor a interactivo
     matplotlib.use('TkAgg', force=True) 
-    import matplotlib.pyplot as plt # Re-importar para aplicar el cambio
-    # -------------------------
+    import matplotlib.pyplot as plt 
 
     if not datos_acumulados:
         print("No data")
         return
 
-    # Extraemos los datos (asumiendo que vienen como lista de tuplas o zip)
+    # Extraemos los datos
     tiempos, salidas = zip(*datos_acumulados)
     
     plt.figure(titulo, figsize=(9, 5))
-    plt.plot(tiempos, salidas, 'b-', label='Output')
-    plt.axhline(y=referencia, color='r', linestyle='--', label='Ref')
-    plt.grid(True)
+
+    # 1. SALIDA: Puntos azules ('bo') como en MATLAB
+    plt.plot(tiempos, salidas, 'bo', markersize=3, label='Output (Filt)')
+    
+    # 2. ENTRADA/REFERENCIA: Puntos rojos discretos alineados con el tiempo
+    if referencia is not None:
+        # Creamos un vector de la referencia con el mismo tiempo que la salida
+        # 'r.' crea puntos rojos pequeños, '.' es más fino que 'o'
+        referencia_vector = [referencia] * len(tiempos)
+        plt.plot(tiempos, referencia_vector, 'ro', markersize=2, label='Reference')
+
+    # Configuración de ejes (Estilo MATLAB)
+    plt.xlabel('t(s)')
+    plt.ylabel(r'$\omega$ (rad/s)')
+    
+    plt.grid(True, linestyle='--', alpha=0.5)
     plt.legend()
     
-    plt.show() # Ahora sí abrirá la ventana
+    plt.show() 
     
-    # --- IMPORTANTE ---
-    # Una vez cerrada la ventana, volvemos a poner 'Agg' 
-    # para que las fórmulas de LaTeX no den problemas luego
+    # Volvemos a 'Agg' para evitar conflictos con el renderizado de Kivy
     matplotlib.use('Agg', force=True)

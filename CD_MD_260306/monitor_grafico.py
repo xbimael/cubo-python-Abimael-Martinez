@@ -17,8 +17,8 @@ class MonitorGrafico(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.plot = PointPlot(color=[0, 0.7, 1, 1], point_size=8) 
-        self.plot_ref = PointPlot(color=[1, 0, 0, 1], point_size=8)
-        self.plot_cursor = PointPlot(color=[0, 0.5, 0, 1], point_size=12)
+        self.plot_ref = PointPlot(color=[1, 0, 0, 1], point_size=7)
+        self.plot_cursor = PointPlot(color=[0, 0.5, 0, 1], point_size=8)
         self.experiment = [] 
         self.ultimos_datos_recibidos = []
         self.ultima_referencia = 0
@@ -49,20 +49,16 @@ class MonitorGrafico(BoxLayout):
     def actualizar_datos_completos(self, tiempos, voltajes, salidas, filtrados, ref_val=None):
         self.experiment = list(zip(tiempos, voltajes, salidas, filtrados))
         
-        # Dibujamos la señal filtrada
+        # 1. Dibujamos la señal principal como puntos ("o")
         self.dibujar_lote(list(zip(tiempos, filtrados)))
 
-        # Si nos pasan una referencia, dibujamos la línea horizontal
+        # 2. Manejo de la Referencia Punteada
         if ref_val is not None and tiempos:
-            # Creamos dos puntos: uno al inicio (0, ref) y otro al final (t_final, ref)
-            self.plot_ref.points = [(0, ref_val), (tiempos[-1], ref_val)]
-
-        if self.plot_ref.color[3] != 0 and ref_val is not None and tiempos:
-            self.plot_ref.points = [(0, ref_val), (tiempos[-1], ref_val)]
+            self.plot_ref.points = [(t, ref_val) for t in tiempos]
         else:
-            self.plot_ref.points = [] # Forzamos que esté vacía
-            
-        # Guardamos los datos en el formato que espera la función de utils (lista de tuplas)
+            self.plot_ref.points = []
+
+        # 3. Guardado para histórico y exportación
         self.ultimos_datos_recibidos = list(zip(tiempos, filtrados))
         self.ultima_referencia = ref_val
 
