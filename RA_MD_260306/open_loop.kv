@@ -40,35 +40,29 @@
             size_hint_y: 0.01
 
         # Contenedor de Inputs
-        MDBoxLayout:
-            orientation: 'vertical'
-            size_hint_y: None
-            height: self.minimum_height
-            spacing: dp(10)
+        MDTextField:
+            id: v_input
+            text: "10"
+            hint_text: "Input Voltage (V)"
+            helper_text: "Range: (-12,12) V"
+            helper_text_mode: "on_focus"
+            mode: "rectangle" # Estilo caja moderna
+            icon_left: "lightning-bolt"
+            input_filter: 'float'
 
-            MDTextField:
-                id: v_input
-                text: "10"
-                hint_text: "Input Voltage (V)"
-                helper_text: "Range: (-12,12) V"
-                helper_text_mode: "on_focus"
-                mode: "rectangle" # Estilo caja moderna
-                icon_left: "lightning-bolt"
-                input_filter: 'float'
+        # Espaciador
+        MDFloatLayout:
+            size_hint_y: 0.001
 
-            # Espaciador
-            MDFloatLayout:
-                size_hint_y: 1
-
-            MDTextField:
-                id: t_input
-                text: "3"
-                hint_text: "Experiment time (s)"
-                helper_text: ""
-                helper_text_mode: "on_focus"
-                mode: "rectangle"
-                icon_left: "timer-outline"
-                input_filter: 'float'
+        MDTextField:
+            id: t_input
+            text: "3"
+            hint_text: "Experiment time (s)"
+            helper_text: ""
+            helper_text_mode: "on_focus"
+            mode: "rectangle"
+            icon_left: "timer-outline"
+            input_filter: 'float'
 
         # Espaciador
         MDFloatLayout:

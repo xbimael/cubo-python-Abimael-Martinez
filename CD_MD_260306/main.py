@@ -38,6 +38,7 @@ class Tab(MDFloatLayout, MDTabsBase):
 class TesterApp(MDApp):
     def build(self):
         # 1. Configuración del Tema Material Design
+        self.theme_cls.theme_style = "Light"
         self.color_resaltado = [0.12, 0.43, 0.46, 1]  # #1E6D76
         self.color_borde = [0.24, 0.49, 0.53, 1]      # #3E7E86
         self.color_fondo_suave = [0.87, 0.91, 0.91, 1] # #DFE7E8
@@ -47,7 +48,7 @@ class TesterApp(MDApp):
 
         # 3. Módulo de Conexión
         self.conexion = ConexionWidget()
-        self.conexion.size_hint_y = 0.034
+        self.conexion.size_hint_y = 0.06
         main_layout.add_widget(self.conexion)
 
         # 4. Zona de trabajo (Horizontal)

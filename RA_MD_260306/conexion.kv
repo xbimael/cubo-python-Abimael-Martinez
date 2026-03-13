@@ -1,8 +1,7 @@
 <ConexionWidget>:
     MDBoxLayout:
         orientation: 'vertical'
-        size_hint_x: 0.6
-        width: dp(300)        # Ajusta según el espacio disponible
+        size_hint_y: 0.8
         spacing: dp(2)        # Espacio mínimo entre título y subtítulo
         padding: [dp(20), 0, 0, 0] # Margen a la izquierda para que no pegue al borde
         pos_hint: {"center_y": .5}
@@ -29,8 +28,7 @@
         id: panel_superior
         orientation: 'vertical'
         size_hint_x: 0.3
-        md_bg_color: app.color_fondo_suave
-        radius: [dp(15),]     
+        radius: [self.height / 2,]     
         elevation: 0           
         padding: dp(10)
         spacing: dp(10)
@@ -39,22 +37,23 @@
             spacing: dp(15)
             orientation: 'horizontal'
 
-            # El Spinner clásico pero con estilo plano para que no desentone
-            Spinner:
+            MDFillRoundFlatButton:
                 id: selector_puerto
                 text: "SELECT SERIAL PORT"
-                values: []
-                size_hint_x: 0.3
-                option_cls: 'CustomSpinnerOption'
-                background_normal: ''
-                background_color: app.color_fondo_suave
+                size_hint_y: None
+                height: dp(48) # Altura estándar de Material Design
+                size_hint_x: 1 # Ocupa todo el ancho disponible
+                md_bg_color: 0,0,0,0
+                text_color: app.color_resaltado
+
+                # Dibujamos el borde manualmente
                 canvas.after:
                     Color:
                         rgba: app.color_borde
                     Line:
                         width: dp(1)
                         rounded_rectangle: (self.x, self.y, self.width, self.height, self.height/2)
-                color: app.color_resaltado
+                on_release: root.abrir_menu_puertos(self)
                 
             # Botón con icono de refrescar
             MDFillRoundFlatButton:

@@ -37,21 +37,15 @@
             size_hint_y: 0.02
             
         # Contenedor para los parámetros
-        MDBoxLayout:
-            orientation: 'vertical'
-            size_hint_y: None
-            height: self.minimum_height
-            spacing: dp(10)
-
-            MDTextField:
-                id: t_input
-                text: "10"
-                hint_text: "Warm up time (s)"
-                helper_text: "Recommended: 10 s"
-                helper_text_mode: "on_focus"
-                input_filter: 'float'
-                mode: "rectangle"
-                icon_left: "timer-sand" # Icono temático de reloj
+        MDTextField:
+            id: t_input
+            text: "10"
+            hint_text: "Warm up time (s)"
+            helper_text: "Recommended: 10 s"
+            helper_text_mode: "on_focus"
+            input_filter: 'float'
+            mode: "rectangle"
+            icon_left: "clock-outline" # Icono temático de reloj
 
         MDFloatLayout:
             size_hint_y: 0.02
