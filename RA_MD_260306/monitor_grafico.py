@@ -16,8 +16,8 @@ class MonitorGrafico(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.plot = PointPlot(color=[0, 0.7, 1, 1], point_size=8) 
-        self.plot_ref = PointPlot(color=[1, 0, 0, 1], point_size=7)
+        self.plot = LinePlot(color=[0, 0.7, 1, 1], line_width=2) 
+        self.plot_ref = LinePlot(color=[1, 0, 0, 1], line_width=2)
         self.plot_cursor = PointPlot(color=[0, 0.5, 0, 1], point_size=8)
         self.experiment = [] 
         self.ultimos_datos_recibidos = []
@@ -27,10 +27,14 @@ class MonitorGrafico(BoxLayout):
         from kivy.clock import Clock
         Clock.schedule_once(lambda dt: self.vincular_plots())
 
-    def vincular_plots(self):
-        if self.graph:
+    def vincular_plots(self, dt=0):
+        if self.ids.graph_id:
+            self.graph = self.ids.graph_id
+            # Limpiamos para evitar duplicados si pulsas "Ejecutar" varias veces
+            self.graph.plots = [] 
             self.graph.add_plot(self.plot)
             self.graph.add_plot(self.plot_ref)
+            print("Plots añadidos correctamente")
 
     # Este método se asegura de que el Graph se actualice al cambiar la propiedad
     def on_unidad_y(self, instance, value):
@@ -38,12 +42,27 @@ class MonitorGrafico(BoxLayout):
         self.ids.lbl_punto_y.text = f"Output: --- {value}"
 
     def limpiar_grafica(self, x_max=10):
+        # Intentamos recuperar el link al gráfico si por alguna razón se perdió
+        if not self.graph:
+            self.graph = self.ids.get('graph_id') # Usa el id exacto que tengas en el .kv
+
+        # Si después de intentar recuperarlo sigue siendo None, abortamos suavemente
+        if self.graph is None:
+            print("ADVERTENCIA: No se pudo encontrar el objeto gráfico para limpiar.")
+            return 
+
+        # Si llegamos aquí, self.graph ya no es None y no habrá crash
         self.plot.points = []
         self.plot_ref.points = []
         self.plot_cursor.points = []
         self.experiment = []
-        self.graph.xmin, self.graph.xmax = 0, x_max
-        self.graph.ymin, self.graph.ymax = 0, 1
+        
+        try:
+            self.graph.xmin, self.graph.xmax = 0, float(x_max)
+            self.graph.ymin, self.graph.ymax = 0, 1
+        except:
+            pass
+            
         self.actualizar_marcas()
 
     def actualizar_datos_completos(self, tiempos, voltajes, salidas, filtrados, ref_val=None):
