@@ -1,7 +1,7 @@
 <ConexionWidget>:
     MDBoxLayout:
         orientation: 'vertical'
-        size_hint_y: 0.8
+        size_hint_x: 0.8
         spacing: dp(2)        # Espacio mínimo entre título y subtítulo
         padding: [dp(20), 0, 0, 0] # Margen a la izquierda para que no pegue al borde
         pos_hint: {"center_y": .5}
@@ -28,7 +28,7 @@
         id: panel_superior
         orientation: 'vertical'
         size_hint_x: 0.3
-        radius: [self.height / 2,]     
+        radius: [self.height/2,]     
         elevation: 0           
         padding: dp(10)
         spacing: dp(10)
@@ -45,8 +45,6 @@
                 size_hint_x: 1 # Ocupa todo el ancho disponible
                 md_bg_color: 0,0,0,0
                 text_color: app.color_resaltado
-
-                # Dibujamos el borde manualmente
                 canvas.after:
                     Color:
                         rgba: app.color_borde

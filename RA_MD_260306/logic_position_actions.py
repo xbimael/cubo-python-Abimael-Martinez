@@ -1,3 +1,4 @@
+from scipy.signal import savgol_filter
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
@@ -7,6 +8,7 @@ import time
 import math
 from utils import crear_ecuacion_latex
 from monitor_grafico import MonitorGrafico
+import config
 
 # Cargamos el diseño KV
 Builder.load_file('position_actions.kv')
@@ -27,24 +29,6 @@ class ModoPositionActions(BoxLayout):
         widget_latex = crear_ecuacion_latex(formula, altura='90dp')
         self.ids.contenedor_export_latex.add_widget(widget_latex)
 
-    def aplicar_filtro_media_movil(self, datos, ventana=13):
-        """Implementa un suavizado básico similar a sgolayfilt."""
-        if len(datos) < ventana:
-            return datos
-        
-        datos_suavizados = []
-        for i in range(len(datos)):
-            if i < ventana:
-                # Al principio, usar media de puntos disponibles
-                ventana_actual = datos[0:i+1]
-            else:
-                ventana_actual = datos[i-ventana+1:i+1]
-            
-            media = sum(ventana_actual) / len(ventana_actual)
-            datos_suavizados.append(media)
-            
-        return datos_suavizados
-    
     def ejecutar_position_actions(self, kp, ki, kd, ref, t_sim):
         if not (self.conexion_ref and self.conexion_ref.arduino.ser):
             return
@@ -52,6 +36,7 @@ class ModoPositionActions(BoxLayout):
         try:
             # Convertir inputs
             tsim = float(t_sim)
+            tsam = config.t_sam * 1000
             k_p = float(kp)
             k_i = float(ki)
             k_d = float(kd)
@@ -69,10 +54,10 @@ class ModoPositionActions(BoxLayout):
             arduino.ser.reset_input_buffer()
             
             # Protocolo de comunicación (Modo 5)
-            # MATLAB envía: Modo, Ref, Tsim, Kp, Kd, Ki
+            # MATLAB envía: Modo, Ref, Tsim, Tsam, Kp, Kd, Ki
             arduino.ser.write(b"5\n")
             time.sleep(0.05)
-            for val in [ref_v, tsim, k_p, k_d, k_i]:
+            for val in [ref_v, tsim, tsam, k_p, k_d, k_i]:
                 arduino.ser.write(f"{val}\n".encode())
                 time.sleep(0.02)
             
@@ -117,15 +102,15 @@ class ModoPositionActions(BoxLayout):
             # Supongamos que guardaste: (tiempo, salida, tension_raw)
             tiempos = [p[0] for p in self.datos_acumulados]
             salidas = [p[1] for p in self.datos_acumulados]
-            
-            # Aplicamos la conversión de tensión de tu MATLAB: dato * 12 / 255
             voltajes = [p[2] * 12 / 255 for p in self.datos_acumulados]
             
             # 2. Aplicamos el filtro (el valor 'ventana' según el modo de MATLAB)
-            # MATLAB usaba 13 para Velocity y 7 para Position
-            ventana = 7 if "Position" in self.__class__.__name__ else 13
-            filtrados = self.aplicar_filtro_media_movil(salidas, ventana=ventana)
-            
+            try:
+                filtrados = savgol_filter(salidas, window_length=13, polyorder=1, mode='interp')
+            except Exception as e:
+                print(f"Error en filtrado: {e}")
+                filtrados = salidas # Fallback por si hay pocos datos
+                
             val_ref = getattr(self, 'referencia_actual', 0.0)
 
             # 3. LLAMADA CLAVE: Enviamos los 4 vectores al monitor gráfico

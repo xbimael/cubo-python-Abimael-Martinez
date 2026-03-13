@@ -5,18 +5,19 @@ from kivymd.uix.list import OneLineListItem
 from kivy.properties import ObjectProperty 
 from serial_manager import ConexionSerial
 from kivymd.app import MDApp
+from kivymd.uix.menu import MDDropdownMenu
 
 # Nota: Es mejor cargar el archivo DESPUÉS de definir la clase 
 # o dentro de la misma, pero vamos a asegurar la propiedad primero.
 
-from kivymd.uix.menu import MDDropdownMenu
-# ... tus otros imports
-
 class ConexionWidget(BoxLayout):
+    # Definimos la propiedad al nivel de clase
     arduino = ObjectProperty(None)
 
     def __init__(self, **kwargs):
+        # Primero creamos el objeto arduino
         self.arduino = ConexionSerial()
+        # Luego ejecutamos el init de la interfaz
         super().__init__(**kwargs)
         self.menu = None # Variable para guardar el menú
 
@@ -40,7 +41,6 @@ class ConexionWidget(BoxLayout):
         self.ids.selector_puerto.text = puerto
         if self.menu:
             self.menu.dismiss()
-        # Aquí podrías llamar a gestionar_conexion automáticamente si quieres
 
     def actualizar_puertos(self):
         puertos = self.arduino.listar_puertos()
@@ -63,7 +63,7 @@ class ConexionWidget(BoxLayout):
         if not self.arduino.conectado:
             exito, mensaje = self.arduino.conectar(puerto)
             if not exito:
-                self.ids.estado_label.text = f"Error: {mensaje}"
+                print(f"[SERIAL] Fallo al abrir el puerto {puerto}.")
         else:
             self.arduino.desconectar()
 
